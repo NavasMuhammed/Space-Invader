@@ -7,15 +7,15 @@ from pygame import mixer
 pygame.init()
 clock = pygame.time.Clock()
 pygame.display.set_caption("Space Invader")
-icon = pygame.image.load('ufo.png')
+icon = pygame.image.load('enemy/ufo.png')
 pygame.display.set_icon(icon)
 screen = pygame.display.set_mode((800, 600))
-background = pygame.image.load('img_1.png')
+background = pygame.image.load('background/img_1.png')
 running = True
 # mixer.music.load("title.mp3")
 # mixer.music.play(-1)
 
-playerImg = pygame.image.load('player.png')
+playerImg = pygame.image.load('player/player.png')
 playerX = 370
 playerY = 480
 playerX_change = 0
@@ -26,14 +26,16 @@ enemyY = []
 enemyX_change = []
 enemyY_change = []
 num_of_enemies = 6
+enemylink = 'enemy/ufo.png'
 for i in range(num_of_enemies):
-    enemyImg.append(pygame.image.load('enemy.png'))
+    enemyImg.append(pygame.image.load(enemylink))
     enemyX.append(random.randint(0, 736))
     enemyY.append(random.randint(30, 150))
     enemyX_change.append(0.3)
     enemyY_change.append(0.01)
 
-bulletImg = pygame.image.load('bullet.png')
+
+bulletImg = pygame.image.load('bullet/bullet.png')
 bulletX = 0
 bulletY = 480
 bulletX_change = 0
@@ -61,13 +63,12 @@ def new_game():
     enemyY_change = []
     num_of_enemies = 6
     for i in range(num_of_enemies):
-        enemyImg.append(pygame.image.load('enemy.png'))
+        enemyImg.append(pygame.image.load(enemylink))
         enemyX.append(random.randint(0, 736))
         enemyY.append(random.randint(30, 150))
         enemyX_change.append(0.3)
         enemyY_change.append(0.01)
 
-    bulletImg = pygame.image.load('bullet.png')
     bulletX = 0
     bulletY = 480
     bulletX_change = 0
@@ -130,6 +131,12 @@ def changeBackground(backgrounds):
     backgroundSelected = False
     background = pygame.image.load(backgrounds)
     
+def changeEnemy(image):
+    global EnemySelected
+    global enemylink
+    EnemySelected = False
+    enemylink  = image
+
 def changePlayer(image):
     global PlayerSelected
     global playerImg
@@ -137,6 +144,14 @@ def changePlayer(image):
     DEFAULT_IMAGE_SIZE = (80,80)
     player = pygame.image.load(image)
     playerImg = pygame.transform.scale(player, DEFAULT_IMAGE_SIZE)
+
+def changeBullet(image):
+    global BulletSelected
+    global bulletImg
+    BulletSelected = False
+    DEFAULT_IMAGE_SIZE = (20,30)
+    bullet = pygame.image.load(image)
+    bulletImg = pygame.transform.scale(bullet, DEFAULT_IMAGE_SIZE)
 
 def imagebutton(x, y, w, h, ic, ac, img,imglink, action=None):
     mouse = pygame.mouse.get_pos()
@@ -175,6 +190,42 @@ def quitgame():
     pygame.quit()
     quit()
 
+def selectBullet():
+    global BulletSelected
+    BulletSelected = True
+    while BulletSelected:
+        for event in pygame.event.get():
+            print(event)
+            if event.type == pygame.QUIT:
+                game_intro()
+        green = (0,255,0)
+        bright_green = (0,200,0)
+        red = (255,0,0)
+        bright_red = (200,0,0)
+        black = (0,0,0)
+        screen.fill(black)
+        imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('bullet/bullet.png'),'bullet/bullet.png',changeBullet)
+        imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('bullet/bullet2.png'),'bullet/bullet2.png',changeBullet)
+        pygame.display.update()
+
+def selectEnemy():
+    global EnemySelected
+    EnemySelected = True
+    while EnemySelected:
+        for event in pygame.event.get():
+            print(event)
+            if event.type == pygame.QUIT:
+                game_intro()
+        green = (0,255,0)
+        bright_green = (0,200,0)
+        red = (255,0,0)
+        bright_red = (200,0,0)
+        black = (0,0,0)
+        screen.fill(black)
+        imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('enemy/enemy.png'),'enemy/enemy.png',changeEnemy)
+        imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('enemy/ufo.png'),'enemy/ufo.png',changeEnemy)
+        pygame.display.update()
+
 def selectPlayer():
     global PlayerSelected
     PlayerSelected = True
@@ -189,9 +240,9 @@ def selectPlayer():
         bright_red = (200,0,0)
         black = (0,0,0)
         screen.fill(black)
-        imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('player.png'),'player.png',changePlayer)
-        imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('player2.png'),'player2.png',changePlayer)
-        imagebutton(500, 100, 150, 150, green, bright_green, pygame.image.load('player3.png'),'player3.png',changePlayer)
+        imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('player/player.png'),'player/player.png',changePlayer)
+        imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('player/player2.png'),'player/player2.png',changePlayer)
+        imagebutton(500, 100, 150, 150, green, bright_green, pygame.image.load('player/player3.png'),'player/player3.png',changePlayer)
         pygame.display.update()
 
 def selectBackground():
@@ -208,8 +259,8 @@ def selectBackground():
         bright_red = (200,0,0)
         black = (0,0,0)
         screen.fill(black)
-        imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('img_1.png'),'img_1.png',changeBackground)
-        imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('img.png'),'img.png',changeBackground)
+        imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('background/img_1.png'),'background/img_1.png',changeBackground)
+        imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('background/img.png'),'background/img.png',changeBackground)
         pygame.display.update()
 
 def game_intro():
@@ -242,6 +293,8 @@ def game_intro():
         button("GO!",280,450,100,50,green,bright_green,game_loop)
         button("change Arena",390,450,130,50,green,bright_green,selectBackground)
         button("change Player",390,550,130,50,green,bright_green,selectPlayer)
+        button("change Enemy",280,550,130,50,green,bright_green,selectEnemy)
+        button("change Bullet",520,550,130,50,green,bright_green,selectBullet)
         button("Quit",550,450,100,50,red,bright_red,quitgame)
 
         pygame.display.update()
