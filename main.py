@@ -10,12 +10,13 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Space Invader")
 icon = pygame.image.load('enemy/ufo.png')
 pygame.display.set_icon(icon)
+pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
 WIDTH = 800
 HEIGHT = 600
 screen = pygame.display.set_mode((800, 600))
-background = pygame.image.load('background/img_1.png')
+background = pygame.image.load('background/img.png')
 running = True
-count = 0
+count = 1
 # mixer.music.load("title.mp3")
 # mixer.music.play(-1)
 
@@ -88,8 +89,8 @@ def new_game():
 	over_font = pygame.font.Font('freesansbold.ttf', 64)
 	game_loop()
 
-def story_new_game(bg,en,enspeed):
-	global playerx,playerY,playerX_change,playerY_change,enemySpeed,enemyImg,enemyX,enemyY,enemyX_change,enemyY_change,num_of_enemies,bulletImg,bulletX,bulletY,bulletX_change,bulletY_change,bullet_state,score_value,font,textX,textY,over_font
+def story_new_game(bg='background/cusat2.jpeg',en='enemy/ufo.png',enspeed=0.3):
+	global playerx,background,playerY,playerX_change,playerY_change,enemySpeed,enemyImg,enemyX,enemyY,enemyX_change,enemyY_change,num_of_enemies,bulletImg,bulletX,bulletY,bulletX_change,bulletY_change,bullet_state,score_value,font,textX,textY,over_font
 	# playerImg = pygame.image.load('player.png')
 	playerX = 370
 	playerY = 480
@@ -133,7 +134,7 @@ def game_over_text():
 	over_text = over_font.render("~GAME OVER~", True, (200, 200, 255))
 	screen.blit(over_text, (170, 250))
 	button("Menu",150,450,100,100,green,bright_green,game_intro)
-	button("Quit",350,450,100,100,red,bright_red,quitgame)
+	button("Quit",550,450,100,100,red,bright_red,quitgame)
 
 def game_won_text():
 	green = (0,255,0)
@@ -142,8 +143,8 @@ def game_won_text():
 	bright_red = (200,0,0)
 	white = (255,255,255)
 	over_text = over_font.render("~GAME WON~", True, red)
-	screen.blit(over_text, white)
-	button("Menu",150,450,100,100,green,bright_green,game_intro)
+	screen.blit(over_text,  (170, 250))
+	button("Menu",350,450,100,100,green,bright_green,game_intro)
 
 def show_score(x, y):
 	score = font.render("score: " + str(score_value), True, (200, 200, 255))
@@ -179,12 +180,14 @@ def text_objects(text, font):
 def changeBackground(backgrounds):
 	global backgroundSelected
 	global background
+	pygame.time.wait(100)
 	backgroundSelected = False
 	background = pygame.image.load(backgrounds)
 	
 def changeEnemy(image):
 	global EnemySelected
 	global enemylink
+	pygame.time.wait(100)
 	EnemySelected = False
 	enemylink  = image
 
@@ -192,6 +195,7 @@ def changePlayer(image):
 	global PlayerSelected
 	global playerImg
 	PlayerSelected = False
+	pygame.time.wait(100)
 	DEFAULT_IMAGE_SIZE = (80,80)
 	player = pygame.image.load(image)
 	playerImg = pygame.transform.scale(player, DEFAULT_IMAGE_SIZE)
@@ -200,11 +204,12 @@ def changeBullet(image):
 	global BulletSelected
 	global bulletImg
 	BulletSelected = False
+	pygame.time.wait(100)
 	DEFAULT_IMAGE_SIZE = (20,30)
 	bullet = pygame.image.load(image)
 	bulletImg = pygame.transform.scale(bullet, DEFAULT_IMAGE_SIZE)
 
-def imagebutton(x, y, w, h, ic, ac, img,imglink, action=None):
+def imagebutton(x, y, w, h, ic, ac, img,imglink,name,action=None):
 	mouse = pygame.mouse.get_pos()
 	click = pygame.mouse.get_pressed()
 
@@ -216,9 +221,15 @@ def imagebutton(x, y, w, h, ic, ac, img,imglink, action=None):
 	if on_button:
 		if click[0] == 1 and action!= None:
 			action(imglink)
+		else:
+			smallText = pygame.font.SysFont("comicsansms",20)
+			text_surface = smallText.render(name, False, (0, 0, 0))
+			# textSurf, textRect = text_objects("ac", smallText)
+			# textRect.center = ( (x+(w/2)), (y+(h/2)) )
+			screen.blit(text_surface,  ((x+w/4), (y+(h))) )
+			
 	screen.blit(image, image.get_rect(center = rect.center)) 
 		
-
 def button(msg,x,y,w,h,ic,ac,action=None):
 	mouse = pygame.mouse.get_pos()
 	click = pygame.mouse.get_pressed()
@@ -255,9 +266,10 @@ def selectBullet():
 		red = (255,0,0)
 		bright_red = (200,0,0)
 		black = (0,0,0)
-		screen.fill(black)
-		imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('bullet/bullet.png'),'bullet/bullet.png',changeBullet)
-		imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('bullet/bullet2.png'),'bullet/bullet2.png',changeBullet)
+		beige = (245,245,220)
+		screen.fill(beige)
+		imagebutton(100, 100, 150, 150, beige, bright_green, pygame.image.load('bullet/bullet.png'),'bullet/bullet.png',"bullet 1",changeBullet)
+		imagebutton(300, 100, 150, 150, beige, bright_green, pygame.image.load('bullet/bullet2.png'),'bullet/bullet2.png',"bullet 2",changeBullet)
 		pygame.display.update()
 
 def selectEnemy():
@@ -274,9 +286,10 @@ def selectEnemy():
 		red = (255,0,0)
 		bright_red = (200,0,0)
 		black = (0,0,0)
-		screen.fill(black)
-		imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('enemy/enemy.png'),'enemy/enemy.png',changeEnemy)
-		imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('enemy/ufo.png'),'enemy/ufo.png',changeEnemy)
+		beige = (245,245,220)
+		screen.fill(beige)
+		imagebutton(100, 100, 150, 150, beige, bright_green, pygame.image.load('enemy/enemy.png'),'enemy/enemy.png',"UFO 1",changeEnemy)
+		imagebutton(300, 100, 150, 150, beige, bright_green, pygame.image.load('enemy/ufo.png'),'enemy/ufo.png',"UFO 2",changeEnemy)
 		pygame.display.update()
 
 def selectPlayer():
@@ -293,10 +306,11 @@ def selectPlayer():
 		red = (255,0,0)
 		bright_red = (200,0,0)
 		black = (0,0,0)
-		screen.fill(black)
-		imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('player/player.png'),'player/player.png',changePlayer)
-		imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('player/player2.png'),'player/player2.png',changePlayer)
-		imagebutton(500, 100, 150, 150, green, bright_green, pygame.image.load('player/player3.png'),'player/player3.png',changePlayer)
+		beige = (245,245,220)
+		screen.fill(beige)
+		imagebutton(100, 100, 150, 150, beige, bright_green, pygame.image.load('player/player.png'),'player/player.png',"Blau",changePlayer)
+		imagebutton(300, 100, 150, 150, beige, bright_green, pygame.image.load('player/player2.png'),'player/player2.png',"Rot",changePlayer)
+		imagebutton(500, 100, 150, 150, beige, bright_green, pygame.image.load('player/player3.png'),'player/player3.png',"Gelb",changePlayer)
 		pygame.display.update()
 
 def selectBackground():
@@ -313,9 +327,10 @@ def selectBackground():
 		red = (255,0,0)
 		bright_red = (200,0,0)
 		black = (0,0,0)
-		screen.fill(black)
-		imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('background/img_1.png'),'background/img_1.png',changeBackground)
-		imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('background/img.png'),'background/img.png',changeBackground)
+		beige = (245,245,220)
+		screen.fill(beige)
+		imagebutton(100, 100, 150, 150, green, bright_green, pygame.image.load('background/img_1.png'),'background/img_1.png',"Arconia",changeBackground)
+		imagebutton(300, 100, 150, 150, green, bright_green, pygame.image.load('background/img.png'),'background/img.png',"Space",changeBackground)
 		pygame.display.update()
 
 def settings():
@@ -330,15 +345,62 @@ def settings():
 		red = (255,0,0)
 		bright_red = (200,0,0)
 		black = (0,0,0)
-		screen.fill(black)
+		beige = (245,245,220)
+		screen.fill(beige)
 		button("Background",100,100,150,50,green,bright_green,selectBackground)
 		button("Player",100,200,150,50,green,bright_green,selectPlayer)
 		button("Enemy",100,300,150,50,green,bright_green,selectEnemy)
 		button("Bullet",100,400,150,50,green,bright_green,selectBullet)
 		pygame.display.update()
 
-def game_intro():
+def boolbutton(msg,x,y,w,h,ic,ac):
+	global paused
+	mouse = pygame.mouse.get_pos()
+	click = pygame.mouse.get_pressed()
+	gameDisplay = screen
+	print(click)
+	if x+w > mouse[0] > x and y+h > mouse[1] > y:
+		pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
 
+		if click[0] == 1:
+			paused = False     
+	else:
+		pygame.draw.rect(gameDisplay, ic,(x,y,w,h))
+
+	smallText = pygame.font.SysFont("comicsansms",20)
+	textSurf, textRect = text_objects(msg, smallText)
+	textRect.center = ( (x+(w/2)), (y+(h/2)) )
+	gameDisplay.blit(textSurf, textRect)
+
+def pause():
+	global paused, HEIGHT,WIDTH, screen
+	paused = True
+	while paused:
+		for event in pygame.event.get():
+			print(event)
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+		green = (0,255,0)
+		bright_green = (0,200,0)
+		red = (255,0,0)
+		bright_red = (200,0,0)
+		black = (0,0,0)
+		cloud_color = (255, 255, 255, 0)
+		# screen = pygame.Surface((WIDTH, HEIGHT))
+		# screen = screen.convert_alpha()
+		# screen.fill((0, 0, 0, 0))
+		# screen.fill(cloud_color)
+		largeText = pygame.font.SysFont("comicsansms",115)
+		TextSurf, TextRect = text_objects("Paused", largeText)
+		TextRect.center = ((WIDTH/2),(HEIGHT/2))
+		screen.blit(TextSurf, TextRect)
+		boolbutton("Continue",150,450,100,50,green,bright_green)
+		button("Quit",550,450,100,50,red,bright_red,game_intro)
+		pygame.display.update()
+		clock.tick(15)
+
+def game_intro():
 	intro = True
 	display_width = 800
 	display_height = 600
@@ -349,16 +411,26 @@ def game_intro():
 	bright_red = (200,0,0)
 	yellow = (255,255,0)
 	beige = (245,245,220)
-	global screen
+	global screen,WIDTH,HEIGHT
 	gameDisplay = screen
+	i = 0
+	bg_img = pygame.image.load('./spacegif.gif')
+	bg_img = pygame.transform.scale(bg_img,(WIDTH,HEIGHT))
 	while intro:
+		gameDisplay.fill((0,0,0))
+		gameDisplay.blit(bg_img,(i,0))
+		gameDisplay.blit(bg_img,(WIDTH+i,0))
+		if (i==-WIDTH):
+			gameDisplay.blit(bg_img,(WIDTH+i,0))
+			i=0
+		i-=1
 		for event in pygame.event.get():
 			print(event)
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				quit()
 				
-		gameDisplay.fill(beige)
+		# gameDisplay.fill(beige)
 		largeText = pygame.font.Font('freesansbold.ttf',95)
 		#change text color to green
 		TextSurf, TextRect = text_objects("Space Invaders", largeText)
@@ -366,7 +438,7 @@ def game_intro():
 		gameDisplay.blit(TextSurf, TextRect)
 
 		button("FREEPLAY",118,405,226,50,green,bright_green,new_game)
-		button("STORY MODE",473,405,232,50,green,bright_green,story_mode_loop)
+		button("STORY MODE",473,405,232,50,green,bright_green,story_new_game)
 		# button("GO!",280,450,100,50,green,bright_green,game_loop)
 		button("Settings",118,513,226,50,green,bright_green,settings)
 		# button("change Arena",390,450,130,50,green,bright_green,selectBackground)
@@ -390,8 +462,12 @@ def game_loop():
 			if event.type == pygame.KEYDOWN:
 				keys = pygame.key.get_pressed()
 		
-			if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+			if event.type == pygame.QUIT:
 				running = False
+			
+			if keys[pygame.K_ESCAPE]:
+				# running = False
+				pause()
 
 			if event.type == pygame.KEYDOWN:
 
@@ -416,7 +492,7 @@ def game_loop():
 			playerX = 706
 
 		for i in range(num_of_enemies):
-			if enemyY[i] > 180:
+			if enemyY[i] > 450:
 				for j in range(num_of_enemies):
 					enemyY[j] = 2000
 				game_over_text()
@@ -457,10 +533,38 @@ def game_loop():
 		pygame.display.update()
 		# global keys
 		
+def next_level_loading():
+	global next_level_loading, HEIGHT,WIDTH, screen
+	next_level_loading = True
+	while next_level_loading:
+		for event in pygame.event.get():
+			print(event)
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+		green = (0,255,0)
+		bright_green = (0,200,0)
+		red = (255,0,0)
+		bright_red = (200,0,0)
+		black = (0,0,0)
+		cloud_color = (255, 255, 255, 0)
+		# screen = pygame.Surface((WIDTH, HEIGHT))
+		# screen = screen.convert_alpha()
+		# screen.fill((0, 0, 0, 0))
+		screen.fill(cloud_color)
+		# TextSurf, TextRect = text_objects("Next Level Loading", largeText)
+		pygame.time.wait(1000)
+		nextlevel = font.render("Next Level Loading", True, black)
+		screen.blit(nextlevel, (WIDTH/2-150, HEIGHT/2))
+		pygame.display.update()
+		pygame.time.wait(5000)
+		next_level_loading = False
+		clock.tick(60)
+
 def story_mode_loop():
-	global playerX,playerY,count,playerX_change,enemySpeed,playerY_change,bulletX,bulletY,bulletX_change,bulletY_change,bullet_state,score_value,enemyX,enemyY,enemyX_change,enemyY_change
+	global playerX,paused,playerY,count,playerX_change,enemySpeed,playerY_change,bulletX,bulletY,bulletX_change,bulletY_change,bullet_state,score_value,enemyX,enemyY,enemyX_change,enemyY_change
 	running = True
-	count=count + 1
+	paused = False
 	while running:
 		screen.fill((0, 0, 0))
 		screen.blit(background, (0, 0))
@@ -469,8 +573,12 @@ def story_mode_loop():
 			if event.type == pygame.KEYDOWN:
 				keys = pygame.key.get_pressed()
 		
-			if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
+			if event.type == pygame.QUIT:
 				running = False
+
+			if keys[pygame.K_ESCAPE]:
+				# running = False
+				pause()
 
 			if event.type == pygame.KEYDOWN:
 
@@ -533,10 +641,19 @@ def story_mode_loop():
 		
 		if score_value >= 5 and count ==1:
 			running = False
-			story_new_game('background/img.png','enemy/enemy.png',0.5)
+			# global count
+			count=2
+			next_level_loading()
+			story_new_game('background/cusat3.jpeg','enemy/enemy.png',0.6)
 
 		if score_value >= 5 and count ==2:
-			# running = False
+			running = False
+			# global count
+			count=3
+			next_level_loading()
+			story_new_game('background/cusat4.jpeg','enemy/enemy.png',0.9)
+		
+		if score_value >= 5 and count ==3:
 			game_won_text()
 		
 
@@ -588,16 +705,7 @@ def loading_progress():
 				quit()
 		screen.fill("#0d0e2e")
 
-		# if not loading_finished:
-		# 	loading_bar_width = loading_progress / WORK * 720
-
-		# 	loading_bar = pygame.transform.scale(loading_bar, (int(loading_bar_width), 150))
-		# 	loading_bar_rect = loading_bar.get_rect(midleft=(280, 360))
-
-		# 	screen.blit(LOADING_BG, LOADING_BG_RECT)
-		# 	screen.blit(loading_bar, loading_bar_rect)
-		# else:
-		# 	screen.blit(finished, finished_rect)
+		
 
 		loading_bar_width = loading_progress / WORK * 720
 
@@ -615,5 +723,6 @@ def loading_progress():
 
 loading_progress()
 game_intro()
+clock.tick(30)
 # game_loop()
 pygame.quit()
