@@ -15,6 +15,7 @@ WIDTH = 800
 HEIGHT = 600
 screen = pygame.display.set_mode((800, 600))
 background = pygame.image.load('background/img.png')
+background1 = pygame.image.load('background/img.png')
 running = True
 count = 1
 # mixer.music.load("title.mp3")
@@ -66,6 +67,8 @@ def new_game():
 	enemyX = []
 	enemyY = []
 	enemyX_change = []
+	mixer.music.load("sounds/freeplaybgm.mp3")
+	mixer.music.play(-1)
 	enemyY_change = []
 	num_of_enemies = 6
 	for i in range(num_of_enemies):
@@ -96,7 +99,8 @@ def story_new_game(bg='background/cusat2.jpeg',en='enemy/ufo.png',enspeed=0.3):
 	playerY = 480
 	playerX_change = 0
 	enemySpeed = enspeed
-
+	mixer.music.load("sounds/spaceshipbgm.mp3")
+	mixer.music.play(-1)
 	enemyImg = []
 	enemyX = []
 	enemyY = []
@@ -142,6 +146,7 @@ def game_won_text():
 	red = (255,0,0)
 	bright_red = (200,0,0)
 	white = (255,255,255)
+	#play sound
 	over_text = over_font.render("~GAME WON~", True, red)
 	screen.blit(over_text,  (170, 250))
 	button("Menu",350,450,100,100,green,bright_green,game_intro)
@@ -179,10 +184,10 @@ def text_objects(text, font):
 
 def changeBackground(backgrounds):
 	global backgroundSelected
-	global background
+	global background1
 	pygame.time.wait(100)
 	backgroundSelected = False
-	background = pygame.image.load(backgrounds)
+	background1 = pygame.image.load(backgrounds)
 	
 def changeEnemy(image):
 	global EnemySelected
@@ -261,6 +266,10 @@ def selectBullet():
 			print(event)
 			if event.type == pygame.QUIT:
 				settings()
+			if event.type == pygame.KEYDOWN:
+				keys = pygame.key.get_pressed()
+				if keys[pygame.K_ESCAPE]:
+					settings()
 		green = (0,255,0)
 		bright_green = (0,200,0)
 		red = (255,0,0)
@@ -281,6 +290,10 @@ def selectEnemy():
 			print(event)
 			if event.type == pygame.QUIT:
 				settings()
+			if event.type == pygame.KEYDOWN:
+				keys = pygame.key.get_pressed()
+				if keys[pygame.K_ESCAPE]:
+					settings()
 		green = (0,255,0)
 		bright_green = (0,200,0)
 		red = (255,0,0)
@@ -301,6 +314,10 @@ def selectPlayer():
 			print(event)
 			if event.type == pygame.QUIT:
 				settings()
+			if event.type == pygame.KEYDOWN:
+				keys = pygame.key.get_pressed()
+				if keys[pygame.K_ESCAPE]:
+					settings()
 		green = (0,255,0)
 		bright_green = (0,200,0)
 		red = (255,0,0)
@@ -322,6 +339,10 @@ def selectBackground():
 			print(event)
 			if event.type == pygame.QUIT:
 				settings()
+			if event.type == pygame.KEYDOWN:
+				keys = pygame.key.get_pressed()
+				if keys[pygame.K_ESCAPE]:
+					settings()
 		green = (0,255,0)
 		bright_green = (0,200,0)
 		red = (255,0,0)
@@ -337,9 +358,12 @@ def settings():
 	settings = True
 	while settings:
 		for event in pygame.event.get():
-			print(event)
 			if event.type == pygame.QUIT:
 				game_intro()
+			if event.type == pygame.KEYDOWN:
+				keys = pygame.key.get_pressed()
+				if keys[pygame.K_ESCAPE]:
+					game_intro()
 		green = (0,255,0)
 		bright_green = (0,200,0)
 		red = (255,0,0)
@@ -387,20 +411,23 @@ def pause():
 		bright_red = (200,0,0)
 		black = (0,0,0)
 		cloud_color = (255, 255, 255, 0)
+		white = (255,255,255)
 		# screen = pygame.Surface((WIDTH, HEIGHT))
 		# screen = screen.convert_alpha()
 		# screen.fill((0, 0, 0, 0))
 		# screen.fill(cloud_color)
-		largeText = pygame.font.SysFont("comicsansms",115)
-		TextSurf, TextRect = text_objects("Paused", largeText)
+		largeText = FONT.render('Paused', True, white)
+		TextRect = largeText.get_rect()
 		TextRect.center = ((WIDTH/2),(HEIGHT/2))
-		screen.blit(TextSurf, TextRect)
+		screen.blit(largeText, TextRect)
 		boolbutton("Continue",150,450,100,50,green,bright_green)
 		button("Quit",550,450,100,50,red,bright_red,game_intro)
 		pygame.display.update()
 		clock.tick(15)
 
 def game_intro():
+	global count
+	count = 1
 	intro = True
 	display_width = 800
 	display_height = 600
@@ -416,6 +443,8 @@ def game_intro():
 	i = 0
 	bg_img = pygame.image.load('./spacegif.gif')
 	bg_img = pygame.transform.scale(bg_img,(WIDTH,HEIGHT))
+	mixer.music.load("sounds/titlenew.mp3")
+	mixer.music.play(-1)
 	while intro:
 		gameDisplay.fill((0,0,0))
 		gameDisplay.blit(bg_img,(i,0))
@@ -456,7 +485,7 @@ def game_loop():
 	running = True
 	while running:
 		screen.fill((0, 0, 0))
-		screen.blit(background, (0, 0))
+		screen.blit(background1, (0, 0))
 		for event in pygame.event.get():
 			keys = pygame.key.get_pressed()
 			if event.type == pygame.KEYDOWN:
@@ -464,6 +493,8 @@ def game_loop():
 		
 			if event.type == pygame.QUIT:
 				running = False
+				mixer.music.load("sounds/titlenew.mp3")
+				mixer.music.play(-1)
 			
 			if keys[pygame.K_ESCAPE]:
 				# running = False
@@ -477,7 +508,7 @@ def game_loop():
 					playerX_change = 0.3
 				if event.key == pygame.K_SPACE:
 					if bullet_state == "ready":
-						bulletSound = mixer.Sound("shoot.wav")
+						bulletSound = mixer.Sound("sounds/shoot.wav")
 						bulletSound.play()
 						bulletX = playerX
 						fire_bullet(playerX, playerY)
@@ -510,7 +541,7 @@ def game_loop():
 
 			collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
 			if collision:
-				explosionSound = mixer.Sound("explosion.mp3")
+				explosionSound = mixer.Sound("sounds/explosion.mp3")
 				explosionSound.play()
 				bulletY = 480
 				bullet_state = "ready"
@@ -534,8 +565,11 @@ def game_loop():
 		# global keys
 		
 def next_level_loading():
-	global next_level_loading, HEIGHT,WIDTH, screen
+	global HEIGHT,WIDTH, screen
 	next_level_loading = True
+	#play music
+	mixer.music.load("sounds/nextlevel.mp3")
+	mixer.music.play(-1)
 	while next_level_loading:
 		for event in pygame.event.get():
 			print(event)
@@ -575,6 +609,8 @@ def story_mode_loop():
 		
 			if event.type == pygame.QUIT:
 				running = False
+				mixer.music.load("sounds/titlenew.mp3")
+				mixer.music.play(-1)
 
 			if keys[pygame.K_ESCAPE]:
 				# running = False
@@ -588,7 +624,7 @@ def story_mode_loop():
 					playerX_change = 0.3
 				if event.key == pygame.K_SPACE:
 					if bullet_state == "ready":
-						bulletSound = mixer.Sound("shoot.wav")
+						bulletSound = mixer.Sound("sounds/shoot.wav")
 						bulletSound.play()
 						bulletX = playerX
 						fire_bullet(playerX, playerY)
@@ -621,7 +657,7 @@ def story_mode_loop():
 
 			collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
 			if collision:
-				explosionSound = mixer.Sound("explosion.mp3")
+				explosionSound = mixer.Sound("sounds/explosion.mp3")
 				explosionSound.play()
 				bulletY = 480
 				bullet_state = "ready"
@@ -640,6 +676,7 @@ def story_mode_loop():
 			bulletY -= bulletY_change
 		
 		if score_value >= 5 and count ==1:
+			pygame.time.wait(500)
 			running = False
 			# global count
 			count=2
@@ -647,14 +684,20 @@ def story_mode_loop():
 			story_new_game('background/cusat3.jpeg','enemy/enemy.png',0.6)
 
 		if score_value >= 5 and count ==2:
+			pygame.time.wait(500)
 			running = False
 			# global count
 			count=3
 			next_level_loading()
 			story_new_game('background/cusat4.jpeg','enemy/enemy.png',0.9)
 		
-		if score_value >= 5 and count ==3:
+		if score_value >= 5 and count >=3:
+			pygame.time.wait(500)
 			game_won_text()
+			if(count ==3):
+				mixer.music.load("sounds/gamewon.mp3")
+				mixer.music.play(-1)
+				count+=1
 		
 
 		player(playerX, playerY)
